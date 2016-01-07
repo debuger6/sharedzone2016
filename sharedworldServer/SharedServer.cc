@@ -71,6 +71,15 @@ void SharedServer::onMessage(const muduo::net::TcpConnectionPtr& conn,
 			SharedSession* ss = boost::any_cast<SharedSession>(conn->getMutableContext()); //return context
 			ss->SetData(buf->peek(), kHeaderLen + len);
 			ss->Process();
+  				
+			if (ss->GetCmd() == CMD_REGISTER)
+            {
+				muduo::net::Buffer response;
+				response.append(ss->GetJos().Data(), ss->GetJos().Length());
+				ss->Clear();
+				conn->send(&response);
+
+			}
 
 			if (ss->GetCmd() == CMD_LOGIN)
 			{

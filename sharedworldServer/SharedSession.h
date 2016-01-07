@@ -31,6 +31,7 @@ using namespace std;
 #define CMD_USERLIST				0X10
 #define CMD_SEND_CONTENT			0x11
 #define CMD_SEND_REBACK				0x12
+#define CMD_UPLOAD_FILE_RESOURCE	0x14
 
 struct RequestHead
 {
@@ -90,7 +91,7 @@ public:
 
 private:
 	void Parse();
-	char buffer_[2048];
+	char buffer_[70000];
 	RequestPack* requestPack_;
 	JOutStream jos_;
 	string account_;

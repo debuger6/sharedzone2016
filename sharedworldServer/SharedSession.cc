@@ -76,6 +76,7 @@ void SharedSession::Parse()
 
 void SharedSession::DoAction()
 {
+	std::cout<<"DoAction"<<std::endl;
 	muduo::Singleton<TransactionManager>::instance().DoAction(*this);  //实例化一个TransactionManager单例对象，并调用TransactionManager的DoAction(..)
 }
 

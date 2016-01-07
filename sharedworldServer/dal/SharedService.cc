@@ -42,7 +42,7 @@ int SharedService::UserLogin(const string& user, const string& pass, list<string
 		{
 			ss.clear();
 			ss.str("");
-			ss<<"insert into t_active_user values(null,'"<<user<<"');";
+			ss<<"insert into t_active_user values(null,'"<<user<<"',"<<"now()"<<");";
 			db.ExecSQL(ss.str().c_str());
 			db.Commit();
 

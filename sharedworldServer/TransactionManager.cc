@@ -2,16 +2,7 @@
 #include "cmd/UserLogin.h"
 #include "cmd/UserRegister.h"
 #include "cmd/SendChatContent.h"
-/*#include "cmd/CloseAccount.h"
-#include "cmd/ChangePassword.h"
-#include "cmd/Deposit.h"
-#include "cmd/BalanceInquiry.h"
-#include "cmd/Transfer.h"
-#include "cmd/Withdrawal.h"
-#include "cmd/QueryDayBill.h"
-#include "cmd/QueryHistoryBill.h"
-#include "cmd/QueryAccountHistoryBill.h" */
-
+#include "cmd/ReceiveFile.h"
 
 
 TransactionManager::TransactionManager()
@@ -19,16 +10,7 @@ TransactionManager::TransactionManager()
 	m_actions[CMD_LOGIN] = new UserLogin;
 	m_actions[CMD_REGISTER] = new UserRegister;
 	m_actions[CMD_SEND_CONTENT] = new SendChatContent;
-/*	m_actions[CMD_OPEN_ACCOUNT] = new OpenAccount;
-	m_actions[CMD_DEPOSIT] = new Deposit;
-	m_actions[CMD_WITHDRAW] = new Withdrawal;
-	m_actions[CMD_TRANSFER] = new Transfer;
-	m_actions[CMD_BALANCE_INQUIRY] = new BalanceInquiry;
-	m_actions[CMD_CHANGE_PASSWORD] = new ChangePassword;
-	m_actions[CMD_DAY_BILL] = new QueryDayBill;
-	m_actions[CMD_HISTORY_BILL] = new QueryHistoryBill;
-	m_actions[CMD_ACCOUNT_HISTORY_BILL] = new QueryAccountHistoryBill;
-	m_actions[CMD_CLOSE_ACCOUNT] = new CloseAccount;*/
+	m_actions[CMD_UPLOAD_FILE_RESOURCE] = new ReceiveFile;
 }
 
 TransactionManager::~TransactionManager()
@@ -43,6 +25,7 @@ TransactionManager::~TransactionManager()
 bool TransactionManager::DoAction(SharedSession& session)
 {
 	uint16 cmd = session.GetCmd();
+	std::cout<<"cmd  "<<cmd<<std::endl;
 	if (m_actions.find(cmd) != m_actions.end())
 	{
 		m_actions[cmd]->Execute(session);

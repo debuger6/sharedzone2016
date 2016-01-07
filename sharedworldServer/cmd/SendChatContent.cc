@@ -54,7 +54,7 @@ void SendChatContent::Execute(SharedSession& session)
 	jos<<cnt<<seq<<error_code;
 	jos.WriteBytes(error_msg, 30);
 	jos<<userName;
-	jos<<Content;
+	jos<<content;
 	jos<<"end";
 	size_t tailPos = jos.Length();
 	jos.Reposition(lengthPos);
