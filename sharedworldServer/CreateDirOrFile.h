@@ -1,3 +1,7 @@
+#ifndef _CREATE_DIR_OR_FILE_H_
+#define _CREATE_DIR_OR_FILE_H_
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -35,3 +39,29 @@ int create_multi_dir(const char *path)
 													        return 0;
 }
 
+
+//判断文件是否存在
+int is_file_exist(const char *file_path)
+{
+	if (NULL == file_path)
+	{
+		return -1;
+	}
+
+	if (access(file_path, F_OK) == 0)
+	{
+		return 0;
+	}
+	return -1;
+}
+
+//判断目录是否存在
+int is_dir_exist(cosnt char *dir_path)
+{
+	if (NULL == dir_path)
+		return -1;
+	if (opendir(dir_path) == NULL)
+		return -1;
+	return 0;
+}
+#endif

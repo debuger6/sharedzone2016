@@ -3,6 +3,7 @@
 #include "../SharedSession.h"
 #include "ReceiveFile.h"
 #include "../dal/SharedService.h"
+#include "../CreateDirOrFile.h"
 
 void ReceiveFile::Execute(SharedSession& session)
 {
