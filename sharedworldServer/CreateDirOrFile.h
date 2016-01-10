@@ -10,7 +10,7 @@
 #include <strings.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-
+#include <dirent.h>
 
 int create_multi_dir(const char *path)
 {
@@ -56,7 +56,7 @@ int is_file_exist(const char *file_path)
 }
 
 //判断目录是否存在
-int is_dir_exist(cosnt char *dir_path)
+int is_dir_exist(const char *dir_path)
 {
 	if (NULL == dir_path)
 		return -1;

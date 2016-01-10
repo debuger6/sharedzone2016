@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include <fcntl.h>
 #include "../SharedSession.h"
 #include "ReceiveFile.h"
 #include "../dal/SharedService.h"
@@ -35,5 +36,39 @@ void ReceiveFile::Execute(SharedSession& session)
 	string content;
 	jis>>content;
 	std::cout<<"ReceiveFile go..."<<std::endl;
+
+	if (flag == 0)
+	{
+		if (is_dir_exist(("/up_load_resource/" + username + "/"  + dir+ "/").c_str()) == 0)
+		{
+			//创建文件
+			fd = open(("/up_load_resource/" + username + "/" + fileName).c_str(), O_RDWR | O_APPEND | O_CREAT);
+			cout<<"fd" << fd <<endl;
+			if (fd != -1)
+			{
+				if(write(fd, content.c_str(), content.length()) == -1)
+					return;
+			}
+			else {
+				return;
+			}
+		}
+		else
+		{
+			//创建目录
+			create_multi_dir(("/up_load_resource/" + username + "/" + dir+"/").c_str());
+			//创建文件
+			if(write(fd, content.c_str(), content.length()) == -1)
+				return;
+		}
+	}
+	else if (flag > 0)
+	{
+		if(write(fd, content.c_str(), content.length()) == -1)
+			return;
+	}
+
+	else if (flag == -1)
+		close(fd);
 }
 
