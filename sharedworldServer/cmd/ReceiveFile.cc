@@ -69,6 +69,10 @@ void ReceiveFile::Execute(SharedSession& session)
 	}
 
 	else if (flag == -1)
+	{
+		SharedService dao;
+		dao.UpLoadFile(fileName, username);
 		close(fd);
+	}
 }
 

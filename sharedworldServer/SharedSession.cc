@@ -11,8 +11,6 @@ SharedSession::SharedSession(map<string, muduo::net::TcpConnectionPtr>& conns,
 	const muduo::net::TcpConnectionPtr conn) : conns_(conns),
 	conn_(conn)
 {
-	cout<<"conns2:"<<&conns_<<endl;
-	cout<<"conn2:"<<conn_<<endl;
 }
 
 SharedSession::~SharedSession()
@@ -76,7 +74,6 @@ void SharedSession::Parse()
 
 void SharedSession::DoAction()
 {
-	std::cout<<"DoAction"<<std::endl;
 	muduo::Singleton<TransactionManager>::instance().DoAction(*this);  //实例化一个TransactionManager单例对象，并调用TransactionManager的DoAction(..)
 }
 

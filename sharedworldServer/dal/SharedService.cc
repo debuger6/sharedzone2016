@@ -151,7 +151,7 @@ int SharedService::LogOut(string account, JOutStream& jos, int len)
 }
 
 // ×¢²á
-int SharedService::UserRegister(Account& account)
+int SharedService::UserRegister(const Account& account)
 {
 	MysqlDB db;
 	Server& server = muduo::Singleton<Server>::instance();
@@ -185,6 +185,82 @@ int SharedService::UserRegister(Account& account)
 
 	return 0;
 }
+
+
+int SharedService::RequestResource(string userName, JOutStream& jos)
+{
+	MysqlDB db;
+	Server& server = muduo::Singleton<Server>::instance();
+
+	try
+	{
+		db.Open(server.GetDbServerIp().c_str(),
+			server.GetDbUser().c_str(),
+			server.GetDbPass().c_str(),
+			server.GetDbName().c_str(),
+			server.GetDbServerPort());
+
+		//LOG_INFO<<"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
+
+		stringstream ss;
+		ss<<"select fileName from t_upload_file where userName='"<<
+			userName<<"';";
+		MysqlRecordset rs;
+		rs = db.QuerySQL(ss.str().c_str());
+		if (rs.GetRows()>0)
+		{
+			for (int i=0; i<rs.GetRows(); ++i)
+			{
+				jos<<rs.GetItem(i, "fileName");
+			}
+		}
+		else
+			return -1;
+	}
+	
+	catch (muduo::Exception& e)
+	{
+		LOG_INFO<<e.what();
+		db.Rollback();
+		return -1;
+	}
+
+	return 0;
+}
+
+int SharedService::UpLoadFile(string fileName, string userName)
+{
+	
+	MysqlDB db;
+	Server& server = muduo::Singleton<Server>::instance();
+
+	try
+	{
+		db.Open(server.GetDbServerIp().c_str(),
+			server.GetDbUser().c_str(),
+			server.GetDbPass().c_str(),
+			server.GetDbName().c_str(),
+			server.GetDbServerPort());
+
+		db.StartTransaction();
+
+		stringstream ss;
+		ss<<"insert into t_upload_file values(null, '"<<
+			fileName<<"', '"<<
+			userName<<"', "<<"now()"<<");";
+		db.ExecSQL(ss.str().c_str());
+		db.Commit();
+	}
+	catch (muduo::Exception& e)
+	{
+		LOG_INFO<<e.what();
+		db.Rollback();
+		return -1;
+	}
+
+	return 0;
+}
+
 
 
 // ´æ¿î

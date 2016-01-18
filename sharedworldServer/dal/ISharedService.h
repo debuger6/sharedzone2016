@@ -13,7 +13,7 @@ public:
 	// 用户登录
 	virtual int UserLogin(const string& user, const string& pass, list<string>& activeUsers) = 0;
 	// 注册
-	virtual int UserRegister(Account& account) = 0;
+	virtual int UserRegister(const Account& account) = 0;
 	// 修改密码
 	virtual int ChangePassword(Account& account, const string& newPass) = 0;
 	// 查询某日报表

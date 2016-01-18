@@ -9,7 +9,11 @@ public:
 	// 用户登录
 	int UserLogin(const string& user, const string& pass, list<string>& activeUsers);
 	// 注册
-	int UserRegister(Account& account);
+	int UserRegister(const Account& account);
+	// 上传文件
+	int UpLoadFile(string fileName, string userName);
+	// 请求资源
+	int RequestResource(string userName, JOutStream& jos); 
 	//退出
 	int LogOut(string account, JOutStream& jos, int len);
 	// 修改密码

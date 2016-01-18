@@ -32,8 +32,6 @@ void SharedServer::onConnection(const muduo::net::TcpConnectionPtr& conn)
 {
 	 if (conn->connected())
      {
-		 cout<<"conns1:"<<&conns_<<endl;
-		 cout<<"conn1:"<<conn<<endl;
 		 conn->setContext(SharedSession(conns_, conn));	// TcpConnection与一个SharedSession绑定
 	 }
 	 else
@@ -49,7 +47,6 @@ void SharedServer::onConnection(const muduo::net::TcpConnectionPtr& conn)
 		 map<string, muduo::net::TcpConnectionPtr>::iterator mIter;
 	     for (mIter = conns_.begin(); mIter != conns_.end(); mIter++ )
 		 {
-			 cout<<"connsecond:"<<mIter->second<<endl;
 			mIter->second->send(&response);
 			response = response1;
 		}
@@ -60,7 +57,6 @@ void SharedServer::onConnection(const muduo::net::TcpConnectionPtr& conn)
 void SharedServer::onMessage(const muduo::net::TcpConnectionPtr& conn,
 		                           muduo::net::Buffer* buf, muduo::Timestamp time)
 {
-	cout<<"conn:"<<conn<<endl;
 	while (buf->readableBytes() >= kHeaderLen)
 	{
 		const void* data = buf->peek();
@@ -97,7 +93,6 @@ void SharedServer::onMessage(const muduo::net::TcpConnectionPtr& conn,
 				{
 					if (mIter->second != conn)
 					{
-						cout<<"f c:"<<mIter->second<<endl;
 						mIter->second->send(&response1);
 					}
 					response1 = responseTemp;
@@ -115,11 +110,15 @@ void SharedServer::onMessage(const muduo::net::TcpConnectionPtr& conn,
 				{
 					if (mIter->second != conn)
 					{
-						cout<<"f c:"<<mIter->second<<endl;
 						mIter->second->send(&response);
 					}
 					response  = response1;
 				}
+
+			}
+
+			if (ss->GetCmd() == CMD_GET_RESOURCE)
+			{
 
 			}
 			buf->retrieve(kHeaderLen+len);
