@@ -119,7 +119,10 @@ void SharedServer::onMessage(const muduo::net::TcpConnectionPtr& conn,
 
 			if (ss->GetCmd() == CMD_GET_RESOURCE)
 			{
-
+				muduo::net::Buffer response;
+				response.append(ss->GetJos().Data(), ss->GetJos().Length());
+				ss->Clear();
+				conn->send(&response);
 			}
 			buf->retrieve(kHeaderLen+len);
 		}

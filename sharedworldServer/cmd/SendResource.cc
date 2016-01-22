@@ -38,7 +38,6 @@ void SendResource::Execute(SharedSession& session)
 	uint16 seq = 0;
 	jos<<cnt<<seq<<error_code;
 	jos.WriteBytes(error_msg, 30);
-	jos<<userName;
 	SharedService dao;
 	dao.RequestResource(username, jos);
 	jos<<"end";
