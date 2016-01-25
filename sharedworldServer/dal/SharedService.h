@@ -12,8 +12,12 @@ public:
 	int UserRegister(const Account& account);
 	// 上传文件
 	int UpLoadFile(string fileName, string userName);
-	// 请求资源
+	// 请求资源路径名
 	int RequestResource(string userName, JOutStream& jos); 
+
+	// 请求资源并发送资源文件
+	int RequestAndSendResource(string userName, string filepath, JOutStream& jos);
+
 	//退出
 	int LogOut(string account, JOutStream& jos, int len);
 	// 修改密码
