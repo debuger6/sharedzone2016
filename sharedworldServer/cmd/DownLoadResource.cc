@@ -43,7 +43,7 @@ void SendResource::Execute(SharedSession& session)
 	char buffer[MAX_SIZE];
 	if (fp == NULL)
 	{
-		jos<<"";
+		jos<<"end";
 
 		size_t tailPos = jos.Length();
 		jos.Reposition(lengthPos);
@@ -63,7 +63,6 @@ void SendResource::Execute(SharedSession& session)
 		muduo::net::Buffer response;
 		response.append(jos.Data(), jos.Length());
 		session.conn_->send(&response);
-		session.conn_->connectDestroyed();
 		jos.Clear();
 		return;
 	}
@@ -96,7 +95,7 @@ void SendResource::Execute(SharedSession& session)
 			muduo::net::Buffer response;
 			response.append(jos.Data(), len);
 			session.conn_->send(&response);
-
+			jos.Clear();
 			memset(buffer, 0, MAX_SIZE * sizeof(char));
 
             
@@ -108,8 +107,9 @@ void SendResource::Execute(SharedSession& session)
 			jos.WriteBytes(error_msg, 30);
 
 		}
+		jos<<"end";
+
 		
-		session.conn_->connectDestroyed();
 	}
 
 }
