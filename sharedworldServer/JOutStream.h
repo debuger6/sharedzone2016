@@ -57,6 +57,11 @@ public:
 		return currIndex_;
 	}
 
+	std::vector<char>& GetBuffer()
+	{
+		return buffer_;
+	}
+
 private:
 	size_t WriteableBytes() const
 	{

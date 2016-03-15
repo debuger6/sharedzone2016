@@ -26,11 +26,13 @@ void DownLoadResource::Execute(SharedSession& session)
 
 	string allFilePath = "/up_load_resource/" + username + "/" + filepath; 
 	cout<<allFilePath<<endl;
-    JOutStream& jos = session.GetJos();	
+    JOutStream& jos = session.GetJos();
+	jos.Clear();
 	//读取文件内容并发送给客户端
 	
-//	int fd = open(allFilePath.c_str(), O_RDONLY);
-	int fd = open("/up_load_resource/admin/C\:/Users/Administrator/Desktop/mongo.txt", O_RDONLY);
+	int fd = open(allFilePath.c_str(), O_RDONLY);
+//	int fd = open("/up_load_resource/admin/C\:/Users/Administrator/Desktop/mongo.txt", O_RDONLY);
+	std::cout<<"/up_load_resource/admin/C\:/Users/Administrator/Desktop/mongo.txt"<<endl;
 	char buffer[MAX_SIZE];
 	if ( fd == -1)
 	{
@@ -50,13 +52,14 @@ void DownLoadResource::Execute(SharedSession& session)
 		uint32 len = 0;
 		while ((len = read(fd, buffer, MAX_SIZE)) > 0)
 		{
-			jos<<len;
-			cout<<len<<endl;
+			std::vector<char> bf = jos.GetBuffer();
 			string content(buffer, len);
+			cout<<content<<endl;
 			jos<<content;
 			//发送文件内容
 			muduo::net::Buffer response;
-			response.append(jos.Data(), len+sizeof(uint32));
+			response.append(jos.Data(), jos.Length());
+
 			session.conn_->send(&response);
 			jos.Clear();
 			memset(buffer, 0, MAX_SIZE * sizeof(char));
@@ -64,6 +67,11 @@ void DownLoadResource::Execute(SharedSession& session)
 		close(fd);
 		jos<<"end";
 
+			//发送文件内容
+			muduo::net::Buffer response;
+			response.append(jos.Data(), jos.Length());
+
+			session.conn_->send(&response);
 		
 	}
 
