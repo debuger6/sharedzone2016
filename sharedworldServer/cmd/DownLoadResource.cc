@@ -1,13 +1,17 @@
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include "DownLoadResource.h"
 #include <string>
 #include "../SharedSession.h"
 #include <iostream>
 #include "../dal/SharedService.h"
 #include "CodeConverter.h"
+
 #define MAX_SIZE	65536
 using namespace std;
 
-void SendResource::Execute(SharedSession& session)
+void DownLoadResource::Execute(SharedSession& session)
 {
 
 	JInStream jis(session.GetRequestPack()->buf, session.GetRequestPack()->head.len);
@@ -21,44 +25,17 @@ void SendResource::Execute(SharedSession& session)
 	jis>>filepath;
 
 	string allFilePath = "/up_load_resource/" + username + "/" + filepath; 
-
-	MD5 md5;
-	int16 error_code = 0;
-	char error_msg[31] = {0};
-
-	JOutStream& jos = session.GetJos();
-
-	// 包头命令
-	jos<<cmd;
-	size_t lengthPos = jos.Length();
-	jos.Skip(2);
-	// 包头cnt、seq、error_code、error_msg
-	uint16 cnt = 0;
-	uint16 seq = 0;
-	jos<<cnt<<seq<<error_code;
-	jos.WriteBytes(error_msg, 30);
-	
+	cout<<allFilePath<<endl;
+    JOutStream& jos = session.GetJos();	
 	//读取文件内容并发送给客户端
-	FILE *fp = fopen(allFilePath, "r");
+	
+//	int fd = open(allFilePath.c_str(), O_RDONLY);
+	int fd = open("/up_load_resource/admin/C\:/Users/Administrator/Desktop/mongo.txt", O_RDONLY);
 	char buffer[MAX_SIZE];
-	if (fp == NULL)
+	if ( fd == -1)
 	{
+		cout<<"open file failed"<<endl;
 		jos<<"end";
-
-		size_t tailPos = jos.Length();
-		jos.Reposition(lengthPos);
-		jos<<static_cast<uint16>(tailPos + 8 - sizeof(ResponseHead)); // 包体长度 + 包尾长度
-		// 包尾
-		jos.Reposition(tailPos);
-		 // 计算包尾
-		unsigned char hash[16];
-		md5.MD5Make(hash, (const unsigned char*)jos.Data(), jos.Length());
-		for (int i=0; i<8; ++i)
-		{
-			 hash[i] = hash[i] ^ hash[i+8];
-			 hash[i] = hash[i] ^ ((cmd >> (i%2)) & 0xff);
-		}
-		jos.WriteBytes(hash, 8);
 
 		muduo::net::Buffer response;
 		response.append(jos.Data(), jos.Length());
@@ -69,44 +46,22 @@ void SendResource::Execute(SharedSession& session)
 
 	else
 	{
-		bzero(buffer, BUFFER_SIZE);
-		int len = 0;
-		while ((len = fread(buffer, sizeof(char), MAX_SIZE, fp)) > 0)
+		bzero(buffer, MAX_SIZE);
+		uint32 len = 0;
+		while ((len = read(fd, buffer, MAX_SIZE)) > 0)
 		{
+			jos<<len;
+			cout<<len<<endl;
 			string content(buffer, len);
 			jos<<content;
-
-
-			size_t tailPos = jos.Length();
-			jos.Reposition(lengthPos);
-			jos<<static_cast<uint16>(tailPos + 8 - sizeof(ResponseHead)); // 包体长度 + 包尾长度
-			// 包尾
-			jos.Reposition(tailPos);
-			 // 计算包尾
-			unsigned char hash[16];
-			md5.MD5Make(hash, (const unsigned char*)jos.Data(), jos.Length());
-			for (int i=0; i<8; ++i)
-			{
-				 hash[i] = hash[i] ^ hash[i+8];
-				 hash[i] = hash[i] ^ ((cmd >> (i%2)) & 0xff);
-			}
-			jos.WriteBytes(hash, 8);
 			//发送文件内容
 			muduo::net::Buffer response;
-			response.append(jos.Data(), len);
+			response.append(jos.Data(), len+sizeof(uint32));
 			session.conn_->send(&response);
 			jos.Clear();
 			memset(buffer, 0, MAX_SIZE * sizeof(char));
-
-            
-        	// 包头命令
-			jos<<cmd;
-			lengthPos = jos.Length();
-			jos.Skip(2);
-			jos<<cnt<<seq<<error_code;
-			jos.WriteBytes(error_msg, 30);
-
 		}
+		close(fd);
 		jos<<"end";
 
 		

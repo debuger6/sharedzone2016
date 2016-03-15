@@ -4,6 +4,7 @@
 #include "cmd/SendChatContent.h"
 #include "cmd/ReceiveFile.h"
 #include "cmd/SendResource.h"
+#include "cmd/DownLoadResource.h"
 
 
 TransactionManager::TransactionManager()
@@ -13,6 +14,7 @@ TransactionManager::TransactionManager()
 	m_actions[CMD_SEND_CONTENT] = new SendChatContent;
 	m_actions[CMD_UPLOAD_FILE_RESOURCE] = new ReceiveFile;
 	m_actions[CMD_GET_RESOURCE] = new SendResource;
+	m_actions[CMD_DOWNLOAD_RESOURCE] = new DownLoadResource;
 }
 
 TransactionManager::~TransactionManager()

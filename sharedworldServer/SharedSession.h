@@ -33,6 +33,7 @@ using namespace std;
 #define CMD_SEND_REBACK				0x12
 #define CMD_UPLOAD_FILE_RESOURCE	0x14
 #define CMD_GET_RESOURCE			0x15
+#define CMD_DOWNLOAD_RESOURCE		0X16
 
 struct RequestHead
 {
