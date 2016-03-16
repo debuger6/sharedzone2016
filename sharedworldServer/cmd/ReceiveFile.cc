@@ -5,6 +5,7 @@
 #include "ReceiveFile.h"
 #include "../dal/SharedService.h"
 #include "../CreateDirOrFile.h"
+#define MAX_SIZE 65536
 
 void ReceiveFile::Execute(SharedSession& session)
 {
@@ -20,7 +21,6 @@ void ReceiveFile::Execute(SharedSession& session)
 	//发送的文件目录
 	string dir;
 	jis>>dir;
-	std::cout<<dir<<std::endl;
 
 	//发送的文件路径全名
 	string fileName;
@@ -30,12 +30,12 @@ void ReceiveFile::Execute(SharedSession& session)
 	//标志位
 	int flag;
 	jis>>flag;
-	std::cout<<flag<<std::endl;
+	std::cout<<"flag"<<flag<<std::endl;
 
 	//文件内容
-	string content;
-	jis>>content;
-	std::cout<<"ReceiveFile go..."<<std::endl;
+	char content[MAX_SIZE];
+	memset(content, 8, MAX_SIZE * sizeof(char));
+	uint16 len = jis.Extract(content);
 
 	if (flag == 0)
 	{
@@ -46,8 +46,9 @@ void ReceiveFile::Execute(SharedSession& session)
 			cout<<"fd" << fd <<endl;
 			if (fd != -1)
 			{
-				if(write(fd, content.c_str(), content.length()) == -1)
+				if(write(fd, content, len) == -1)
 					return;
+				std::cout<<"write successful"<<strlen(content)<<endl;
 			}
 			else {
 				return;
@@ -58,13 +59,13 @@ void ReceiveFile::Execute(SharedSession& session)
 			//创建目录
 			create_multi_dir(("/up_load_resource/" + username + "/" + dir+"/").c_str());
 			//创建文件
-			if(write(fd, content.c_str(), content.length()) == -1)
+			if(write(fd, content, len) == -1)
 				return;
 		}
 	}
 	else if (flag > 0)
 	{
-		if(write(fd, content.c_str(), content.length()) == -1)
+		if(write(fd, content, len) == -1)
 			return;
 	}
 

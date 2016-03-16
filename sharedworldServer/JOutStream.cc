@@ -73,7 +73,6 @@ void JOutStream::WriteBytes(const void* data, size_t len)
 
 void JOutStream::Append(const char* data, size_t len)
 {
-	std::cout<<"len"<<len<<"  data:"<<data<<std::endl;;
 	EnsureWritableBytes(len);
 	std::copy(data, data+len, buffer_.begin()+currIndex_);
 	currIndex_ += len;

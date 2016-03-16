@@ -25,7 +25,7 @@ public:
 	JInStream& operator>>(int32& x);
 
 	JInStream& operator>>(std::string& str);
-	
+	uint16 Extract(char* buf);
 	void Reposition(size_t pos)
 	{
 		currIndex_ = pos;

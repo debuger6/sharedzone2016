@@ -2,7 +2,7 @@
 #include <assert.h>
 #include <string.h>
 #include <muduo/net/Endian.h>
-
+#include <iostream>
 JInStream::JInStream()
 	: currIndex_(0)
 {
@@ -109,4 +109,16 @@ JInStream& JInStream::operator>>(std::string& str)
 	currIndex_ += len;
 
 	return *this;
+}
+
+
+uint16 JInStream::Extract(char* buf)
+{
+	uint16 len;
+	*this >> len;
+	std::cout<<"len"<<len<<std::endl;
+	assert(ReadableBytes() >= len);
+	memcpy(buf, Peek(), len);
+	currIndex_ += len;
+    return len;
 }
