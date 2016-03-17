@@ -8,8 +8,6 @@ class ReceiveFile : public Transaction
 {
 public:
 	virtual void Execute(SharedSession& session);
-private:
-	int fd;
 };
 
 

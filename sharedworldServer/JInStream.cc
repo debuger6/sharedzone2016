@@ -112,11 +112,11 @@ JInStream& JInStream::operator>>(std::string& str)
 }
 
 
-uint16 JInStream::Extract(char* buf)
+uint32 JInStream::Extract(char* buf)
 {
-	uint16 len;
+	uint32 len;
 	*this >> len;
-	std::cout<<"len"<<len<<std::endl;
+	std::cout<<"len:"<<len<<std::endl;
 	assert(ReadableBytes() >= len);
 	memcpy(buf, Peek(), len);
 	currIndex_ += len;

@@ -82,3 +82,9 @@ void JOutStream::Append(const void*  data, size_t len)
 {
 	Append(static_cast<const char*>(data), len);
 }
+
+void JOutStream::AppendWithLen(const char* buf, uint32 len)
+{
+	*this << len;
+	Append(buf, len);
+}

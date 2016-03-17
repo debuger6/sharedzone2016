@@ -34,39 +34,60 @@ void ReceiveFile::Execute(SharedSession& session)
 
 	//文件内容
 	char content[MAX_SIZE];
-	memset(content, 8, MAX_SIZE * sizeof(char));
-	uint16 len = jis.Extract(content);
-
+	memset(content, 0, MAX_SIZE * sizeof(char));
+	uint32 len = jis.Extract(content);
+	std::cout<<len<<std::endl;
+	int fd;
 	if (flag == 0)
 	{
 		if (is_dir_exist(("/up_load_resource/" + username + "/"  + dir+ "/").c_str()) == 0)
 		{
 			//创建文件
-			fd = open(("/up_load_resource/" + username + "/" + fileName).c_str(), O_RDWR | O_APPEND | O_CREAT);
+			fd = open(("/up_load_resource/" + username + "/" + fileName).c_str(), O_RDWR | O_APPEND | O_CREAT, S_IWUSR|S_IRUSR);
 			cout<<"fd" << fd <<endl;
 			if (fd != -1)
 			{
 				if(write(fd, content, len) == -1)
 					return;
-				std::cout<<"write successful"<<strlen(content)<<endl;
+				std::cout<<"write successful"<<endl;
+				close(fd);
 			}
 			else {
+				std::cout<<"open failed"<<std::endl;
 				return;
 			}
+			
 		}
 		else
 		{
 			//创建目录
 			create_multi_dir(("/up_load_resource/" + username + "/" + dir+"/").c_str());
 			//创建文件
+			fd = open(("/up_load_resource/" + username + "/" + fileName).c_str(), O_RDWR | O_APPEND | O_CREAT ,S_IRUSR | S_IWUSR);
+			cout<<"fd" << fd <<endl;
 			if(write(fd, content, len) == -1)
+			{
+
+				close(fd);
 				return;
+			}
+				close(fd);
+
 		}
 	}
 	else if (flag > 0)
 	{
-		if(write(fd, content, len) == -1)
-			return;
+			//创建文件
+			fd = open(("/up_load_resource/" + username + "/" + fileName).c_str(), O_RDWR | O_APPEND | O_CREAT);
+			cout<<"fd" << fd <<endl;
+			if(write(fd, content, len) == -1)
+			{
+				close(fd);
+				
+				return;
+			}
+
+				close(fd);
 	}
 
 	else if (flag == -1)

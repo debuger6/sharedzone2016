@@ -22,6 +22,7 @@ public:
 	JOutStream& operator<<(int32 x);
 
 	JOutStream& operator<<(const std::string& str);
+	void AppendWithLen(const char* buf, uint32 len);
 	
 	void WriteBytes(const void* data, size_t len);
 	

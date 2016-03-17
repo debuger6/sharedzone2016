@@ -8,7 +8,7 @@
 #include "../dal/SharedService.h"
 #include "CodeConverter.h"
 
-#define MAX_SIZE	65536
+#define MAX_SIZE	6553
 using namespace std;
 
 void DownLoadResource::Execute(SharedSession& session)
@@ -32,7 +32,6 @@ void DownLoadResource::Execute(SharedSession& session)
 	
 	int fd = open(allFilePath.c_str(), O_RDONLY);
 //	int fd = open("/up_load_resource/admin/C\:/Users/Administrator/Desktop/mongo.txt", O_RDONLY);
-	std::cout<<"/up_load_resource/admin/C\:/Users/Administrator/Desktop/mongo.txt"<<endl;
 	char buffer[MAX_SIZE];
 	if ( fd == -1)
 	{
@@ -52,10 +51,8 @@ void DownLoadResource::Execute(SharedSession& session)
 		uint32 len = 0;
 		while ((len = read(fd, buffer, MAX_SIZE)) > 0)
 		{
-			std::vector<char> bf = jos.GetBuffer();
-			string content(buffer, len);
-			cout<<content<<endl;
-			jos<<content;
+			cout<<"len"<<len<<endl;
+			jos.AppendWithLen(buffer, len);
 			//发送文件内容
 			muduo::net::Buffer response;
 			response.append(jos.Data(), jos.Length());
@@ -65,7 +62,8 @@ void DownLoadResource::Execute(SharedSession& session)
 			memset(buffer, 0, MAX_SIZE * sizeof(char));
 		}
 		close(fd);
-		jos<<"end";
+		string content = "end";
+		jos.AppendWithLen(content.c_str(), content.length());
 
 			//发送文件内容
 			muduo::net::Buffer response;
