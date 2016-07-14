@@ -7,7 +7,7 @@
 #include <muduo/base/Exception.h>
 #include "../Types.h"
 #include "../JUtil.h"
-
+#include <iostream>
 #include <sstream>
 using namespace std;
 
@@ -165,16 +165,17 @@ int SharedService::UserRegister(const Account& account)
 			server.GetDbServerPort());
 
 		db.StartTransaction();
-
+		
+		unsigned long long rs;
 		stringstream ss;
-		ss<<"insert into t_user values(null, '"<<
+		ss<<"insert into t_user(account, password, regtime) select '"<<
 			account.account<<"', '"<<
-			account.pass<<"', "<<"now()"<<");";
-		db.ExecSQL(ss.str().c_str());
-
-
-
+			account.pass<<"', "<<"now() from dual"<<" where not exists (select * from t_user where account='"<<account.account<<"');";
+		std::cout<<ss.str()<<endl;
+		rs = db.ExecSQL(ss.str().c_str());
 		db.Commit();
+		if (rs < 1)	// no data found
+			return 1; //用户已存在
 	}
 	catch (muduo::Exception& e)
 	{
@@ -245,9 +246,10 @@ int SharedService::UpLoadFile(string fileName, string userName)
 		db.StartTransaction();
 
 		stringstream ss;
-		ss<<"insert into t_upload_file values(null, '"<<
+		ss<<"insert into t_upload_file(fileName, userName, upload_time) select '"<<
 			fileName<<"', '"<<
-			userName<<"', "<<"now()"<<");";
+			userName<<"', "<<"now() from dual"<<" where not exists(select * from t_upload_file where userName='"<<userName<<"' and fileName='"<<fileName<<"');";
+		std::cout<<ss.str()<<endl;
 		db.ExecSQL(ss.str().c_str());
 		db.Commit();
 	}

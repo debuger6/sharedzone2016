@@ -9,7 +9,7 @@
 #include "../dal/SharedService.h"
 #include "CodeConverter.h"
 
-#define MAX_SIZE	6553
+#define MAX_SIZE	13000
 using namespace std;
 
 
@@ -66,15 +66,15 @@ void* thread_func(void* arg)
 		string content = "end";
 		jos.AppendWithLen(content.c_str(), content.length());
 
-			//发送文件内容
-			muduo::net::Buffer response;
-			response.append(jos.Data(), jos.Length());
+		//发送文件内容
+		muduo::net::Buffer response;
+		response.append(jos.Data(), jos.Length());
 
-			session->conn_->send(&response);
-		
+		session->conn_->send(&response);
+		pthread_exit(NULL);
 	}
 
-	pthread_exit(NULL);
+
 }
 
 void DownLoadResource::Execute(SharedSession& session)
